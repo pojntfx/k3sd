@@ -4,7 +4,7 @@ package k3sd;
 
 // K3SAgentManager manages k3s agents.
 service K3SAgentManager {
-  rpc Start(K3SAgent) returns (K3SAgentManagedId) {};
+  rpc Start(K3SAgent) returns (K3SAgentState) {};
 }
 
 message K3SAgent {
@@ -13,4 +13,4 @@ message K3SAgent {
   string ServerURL = 3;
 }
 
-message K3SAgentManagedId { string Id = 1; };
+message K3SAgentState { bool Running = 1; };

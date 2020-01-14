@@ -79,65 +79,66 @@ func (m *K3SAgent) GetServerURL() string {
 	return ""
 }
 
-type K3SAgentManagedId struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=Id,proto3" json:"Id,omitempty"`
+type K3SAgentState struct {
+	Running              bool     `protobuf:"varint,1,opt,name=Running,proto3" json:"Running,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *K3SAgentManagedId) Reset()         { *m = K3SAgentManagedId{} }
-func (m *K3SAgentManagedId) String() string { return proto.CompactTextString(m) }
-func (*K3SAgentManagedId) ProtoMessage()    {}
-func (*K3SAgentManagedId) Descriptor() ([]byte, []int) {
+func (m *K3SAgentState) Reset()         { *m = K3SAgentState{} }
+func (m *K3SAgentState) String() string { return proto.CompactTextString(m) }
+func (*K3SAgentState) ProtoMessage()    {}
+func (*K3SAgentState) Descriptor() ([]byte, []int) {
 	return fileDescriptor_56ede974c0020f77, []int{1}
 }
 
-func (m *K3SAgentManagedId) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_K3SAgentManagedId.Unmarshal(m, b)
+func (m *K3SAgentState) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_K3SAgentState.Unmarshal(m, b)
 }
-func (m *K3SAgentManagedId) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_K3SAgentManagedId.Marshal(b, m, deterministic)
+func (m *K3SAgentState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_K3SAgentState.Marshal(b, m, deterministic)
 }
-func (m *K3SAgentManagedId) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_K3SAgentManagedId.Merge(m, src)
+func (m *K3SAgentState) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_K3SAgentState.Merge(m, src)
 }
-func (m *K3SAgentManagedId) XXX_Size() int {
-	return xxx_messageInfo_K3SAgentManagedId.Size(m)
+func (m *K3SAgentState) XXX_Size() int {
+	return xxx_messageInfo_K3SAgentState.Size(m)
 }
-func (m *K3SAgentManagedId) XXX_DiscardUnknown() {
-	xxx_messageInfo_K3SAgentManagedId.DiscardUnknown(m)
+func (m *K3SAgentState) XXX_DiscardUnknown() {
+	xxx_messageInfo_K3SAgentState.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_K3SAgentManagedId proto.InternalMessageInfo
+var xxx_messageInfo_K3SAgentState proto.InternalMessageInfo
 
-func (m *K3SAgentManagedId) GetId() string {
+func (m *K3SAgentState) GetRunning() bool {
 	if m != nil {
-		return m.Id
+		return m.Running
 	}
-	return ""
+	return false
 }
 
 func init() {
 	proto.RegisterType((*K3SAgent)(nil), "k3sd.K3SAgent")
-	proto.RegisterType((*K3SAgentManagedId)(nil), "k3sd.K3SAgentManagedId")
+	proto.RegisterType((*K3SAgentState)(nil), "k3sd.K3SAgentState")
 }
 
 func init() { proto.RegisterFile("agent.proto", fileDescriptor_56ede974c0020f77) }
 
 var fileDescriptor_56ede974c0020f77 = []byte{
-	// 176 bytes of a gzipped FileDescriptorProto
+	// 184 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4e, 0x4c, 0x4f, 0xcd,
 	0x2b, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0xc9, 0x36, 0x2e, 0x4e, 0x51, 0x4a, 0xe1,
 	0xe2, 0xf0, 0x36, 0x0e, 0x76, 0x04, 0x89, 0x0b, 0xa9, 0x70, 0xf1, 0xfa, 0xa5, 0x96, 0x94, 0xe7,
 	0x17, 0x65, 0xbb, 0xa4, 0x96, 0x65, 0x26, 0xa7, 0x4a, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0xa1,
 	0x0a, 0x0a, 0x89, 0x70, 0xb1, 0x86, 0xe4, 0x67, 0xa7, 0xe6, 0x49, 0x30, 0x81, 0x65, 0x21, 0x1c,
 	0x21, 0x19, 0x2e, 0xce, 0xe0, 0xd4, 0xa2, 0xb2, 0xd4, 0xa2, 0xd0, 0x20, 0x1f, 0x09, 0x66, 0xb0,
-	0x0c, 0x42, 0x40, 0x49, 0x99, 0x4b, 0x10, 0x66, 0x8b, 0x6f, 0x62, 0x5e, 0x62, 0x7a, 0x6a, 0x8a,
-	0x67, 0x8a, 0x10, 0x1f, 0x17, 0x93, 0x67, 0x0a, 0xd4, 0x0e, 0x26, 0xcf, 0x14, 0x23, 0x57, 0x2e,
-	0x7e, 0x54, 0x45, 0x45, 0x42, 0x46, 0x5c, 0xac, 0xc1, 0x25, 0x89, 0x45, 0x25, 0x42, 0x7c, 0x7a,
-	0x20, 0xd7, 0xea, 0xc1, 0xe4, 0xa5, 0xc4, 0x51, 0xf9, 0x70, 0x43, 0x95, 0x18, 0x92, 0xd8, 0xc0,
-	0xde, 0x33, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x49, 0xc7, 0x5b, 0xdb, 0xed, 0x00, 0x00, 0x00,
+	0x0c, 0x42, 0x40, 0x49, 0x93, 0x8b, 0x17, 0x66, 0x4b, 0x70, 0x49, 0x62, 0x49, 0xaa, 0x90, 0x04,
+	0x17, 0x7b, 0x50, 0x69, 0x5e, 0x5e, 0x66, 0x5e, 0x3a, 0xd8, 0x12, 0x8e, 0x20, 0x18, 0xd7, 0xc8,
+	0x91, 0x8b, 0x1f, 0xa6, 0xd4, 0x37, 0x31, 0x2f, 0x31, 0x3d, 0xb5, 0x48, 0x48, 0x8f, 0x8b, 0x35,
+	0xb8, 0x24, 0xb1, 0xa8, 0x44, 0x88, 0x4f, 0x0f, 0xe4, 0x66, 0x3d, 0x98, 0xbc, 0x94, 0x30, 0x2a,
+	0x1f, 0x6c, 0xb4, 0x12, 0x43, 0x12, 0x1b, 0xd8, 0x83, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0xfa, 0x77, 0x71, 0x8a, 0xef, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -152,7 +153,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type K3SAgentManagerClient interface {
-	Start(ctx context.Context, in *K3SAgent, opts ...grpc.CallOption) (*K3SAgentManagedId, error)
+	Start(ctx context.Context, in *K3SAgent, opts ...grpc.CallOption) (*K3SAgentState, error)
 }
 
 type k3SAgentManagerClient struct {
@@ -163,8 +164,8 @@ func NewK3SAgentManagerClient(cc *grpc.ClientConn) K3SAgentManagerClient {
 	return &k3SAgentManagerClient{cc}
 }
 
-func (c *k3SAgentManagerClient) Start(ctx context.Context, in *K3SAgent, opts ...grpc.CallOption) (*K3SAgentManagedId, error) {
-	out := new(K3SAgentManagedId)
+func (c *k3SAgentManagerClient) Start(ctx context.Context, in *K3SAgent, opts ...grpc.CallOption) (*K3SAgentState, error) {
+	out := new(K3SAgentState)
 	err := c.cc.Invoke(ctx, "/k3sd.K3SAgentManager/Start", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -174,14 +175,14 @@ func (c *k3SAgentManagerClient) Start(ctx context.Context, in *K3SAgent, opts ..
 
 // K3SAgentManagerServer is the server API for K3SAgentManager service.
 type K3SAgentManagerServer interface {
-	Start(context.Context, *K3SAgent) (*K3SAgentManagedId, error)
+	Start(context.Context, *K3SAgent) (*K3SAgentState, error)
 }
 
 // UnimplementedK3SAgentManagerServer can be embedded to have forward compatible implementations.
 type UnimplementedK3SAgentManagerServer struct {
 }
 
-func (*UnimplementedK3SAgentManagerServer) Start(ctx context.Context, req *K3SAgent) (*K3SAgentManagedId, error) {
+func (*UnimplementedK3SAgentManagerServer) Start(ctx context.Context, req *K3SAgent) (*K3SAgentState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Start not implemented")
 }
 

@@ -6,10 +6,12 @@ package svc
 ////go:generate sh -c "rm -rf k3s statik; git clone --depth 1 https://github.com/rancher/k3s.git; cd k3s; make; mkdir -p dist; cd ../; statik -src k3s/dist/artifacts"
 
 import (
+	"context"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
 	_ "github.com/pojntfx/k3sd/pkg/svc/statik" // Embedded k3s binary
 	"github.com/pojntfx/k3sd/pkg/workers"
 	"github.com/rakyll/statik/fs"
+	"gitlab.com/bloom42/libs/rz-go/log"
 	"os"
 )
 
@@ -18,6 +20,47 @@ type K3SAgentManager struct {
 	k3sd.UnimplementedK3SAgentManagerServer
 	BinaryDir  string
 	K3SManaged *workers.K3SAgent
+}
+
+// Start starts the k3s agent.
+func (a *K3SAgentManager) Start(_ context.Context, args *k3sd.K3SAgent) (*k3sd.K3SAgentState, error) {
+	k3s := workers.K3SAgent{
+		BinaryDir:     a.BinaryDir,
+		NetworkDevice: args.GetNetworkDevice(),
+		Token:         args.GetToken(),
+		ServerURL:     args.GetServerURL(),
+	}
+
+	if err := k3s.Start(); err != nil {
+		log.Error(err.Error())
+	}
+
+	go func(k3s *workers.K3SAgent) {
+		log.Info("Starting k3s agent")
+
+		_ = k3s.Wait()
+
+		// Keep the k3s agent running
+		for {
+			if !k3s.IsScheduledForDeletion() {
+				log.Info("Restarting k3s agent")
+
+				if err := k3s.Start(); err != nil {
+					log.Error(err.Error())
+				}
+
+				_ = k3s.Wait()
+			} else {
+				break
+			}
+		}
+	}(&k3s)
+
+	a.K3SManaged = &k3s
+
+	return &k3sd.K3SAgentState{
+		Running: true,
+	}, nil
 }
 
 // Extract extracts the k3s binary.
@@ -49,7 +92,7 @@ func (a *K3SAgentManager) Extract() error {
 	return nil
 }
 
-// Cleanup deletes the extracted k3s client binary.
+// Cleanup deletes the extracted k3s binary.
 func (a *K3SAgentManager) Cleanup() error {
 	return os.Remove(a.BinaryDir)
 }
