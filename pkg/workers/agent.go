@@ -10,10 +10,10 @@ import (
 // K3SAgent is the k3s agent.
 type K3SAgent struct {
 	utils.ProcessWorker
+	BinaryDir     string
 	NetworkDevice string
 	Token         string
 	ServerURL     string
-	BinaryDir     string
 }
 
 // Start starts the the k3s agent.
