@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package k3sd;
+
+import public "agent.proto";
+import public "server.proto";
