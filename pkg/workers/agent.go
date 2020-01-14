@@ -23,7 +23,7 @@ func (a *K3SAgent) Start() error {
 	command := exec.Command(
 		a.BinaryDir,
 		"agent",
-		"--flannel-interface",
+		"--flannel-iface",
 		a.NetworkDevice,
 		"--token",
 		a.Token,
