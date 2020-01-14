@@ -10,7 +10,7 @@ service K3SAgentManager {
 message K3SAgent {
   string NetworkDevice = 1;
   string Token = 2;
-  string AgentURL = 3;
+  string ServerURL = 3;
 }
 
 message K3SAgentManagedId { string Id = 1; };
