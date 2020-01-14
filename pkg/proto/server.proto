@@ -4,7 +4,7 @@ package k3sd;
 
 // K3SServerManager manages k3s servers.
 service K3SServerManager {
-  rpc Create(K3SServer) returns (K3SServerManagedId) {};
+  rpc Start(K3SServer) returns (K3SServerManagedId) {};
 }
 
 message K3SServer {
