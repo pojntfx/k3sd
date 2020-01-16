@@ -54,8 +54,13 @@ https://pojntfx.github.io/k3sd/`,
 		server := grpc.NewServer()
 		reflection.Register(server)
 
+		extractService := svc.ExtractService{
+			BinaryDir:          binaryDir,
+			BinaryInternalPath: "/k3s",
+		}
+
 		K3SAgentService := svc.K3SAgentManager{
-			BinaryDir: binaryDir,
+			ExtractService: extractService,
 		}
 
 		k3sd.RegisterK3SAgentManagerServer(server, &K3SAgentService)
@@ -88,14 +93,14 @@ https://pojntfx.github.io/k3sd/`,
 				}
 			}
 
-			if err := K3SAgentService.Cleanup(); err != nil {
+			if err := extractService.Cleanup(); err != nil {
 				log.Fatal(agentMsg, rz.Err(err))
 			}
 
 			server.GracefulStop()
 		}()
 
-		if err := K3SAgentService.Extract(); err != nil {
+		if err := extractService.Extract(); err != nil {
 			return err
 		}
 
