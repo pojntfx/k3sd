@@ -8,19 +8,16 @@ package svc
 import (
 	"context"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
-	_ "github.com/pojntfx/k3sd/pkg/svc/statik" // Embedded k3s binary
 	"github.com/pojntfx/k3sd/pkg/workers"
-	"github.com/rakyll/statik/fs"
 	"gitlab.com/bloom42/libs/rz-go/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"os"
 )
 
 // K3SAgentManager manages k3s agents.
 type K3SAgentManager struct {
+	ExtractService
 	k3sd.UnimplementedK3SAgentManagerServer
-	BinaryDir  string
 	K3SManaged *workers.K3SAgent
 }
 
@@ -91,41 +88,9 @@ func (a *K3SAgentManager) Stop(_ context.Context, _ *k3sd.K3SAgentStopArgs) (*k3
 		}
 	}
 
+	a.K3SManaged = nil
+
 	return &k3sd.K3SAgentState{
 		Running: false,
 	}, nil
-}
-
-// Extract extracts the k3s binary.
-func (a *K3SAgentManager) Extract() error {
-	statikFS, err := fs.New()
-	if err != nil {
-		return err
-	}
-
-	data, err := fs.ReadFile(statikFS, "/k3s")
-	if err != nil {
-		return err
-	}
-
-	binaryFile, err := os.Create(a.BinaryDir)
-	if err != nil {
-		return err
-	}
-
-	if _, err = binaryFile.Write(data); err != nil {
-		return err
-	}
-	defer binaryFile.Close()
-
-	if err := os.Chmod(a.BinaryDir, os.ModePerm); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Cleanup deletes the extracted k3s binary.
-func (a *K3SAgentManager) Cleanup() error {
-	return os.Remove(a.BinaryDir)
 }
