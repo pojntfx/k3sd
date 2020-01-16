@@ -12,6 +12,8 @@ import (
 	"github.com/pojntfx/k3sd/pkg/workers"
 	"github.com/rakyll/statik/fs"
 	"gitlab.com/bloom42/libs/rz-go/log"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"os"
 )
 
@@ -60,6 +62,37 @@ func (a *K3SAgentManager) Start(_ context.Context, args *k3sd.K3SAgent) (*k3sd.K
 
 	return &k3sd.K3SAgentState{
 		Running: true,
+	}, nil
+}
+
+// Stop stops the k3s agent.
+func (a *K3SAgentManager) Stop(_ context.Context, _ *k3sd.K3SAgentStopArgs) (*k3sd.K3SAgentState, error) {
+	if a.K3SManaged == nil {
+		msg := "k3s agent hasn't been started yet"
+
+		log.Error(msg)
+
+		return nil, status.Errorf(codes.NotFound, msg)
+	}
+
+	log.Info("Stopping k3s agent")
+
+	if err := a.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
+		log.Error(err.Error())
+
+		return nil, status.Errorf(codes.Unknown, err.Error())
+	}
+
+	if a.K3SManaged.IsRunning() {
+		if err := a.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
+			log.Error(err.Error())
+
+			return nil, status.Errorf(codes.Unknown, err.Error())
+		}
+	}
+
+	return &k3sd.K3SAgentState{
+		Running: false,
 	}, nil
 }
 
