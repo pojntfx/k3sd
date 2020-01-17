@@ -71,6 +71,37 @@ func (m *K3SServer) GetTLSSan() string {
 	return ""
 }
 
+type K3SServerStopArgs struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *K3SServerStopArgs) Reset()         { *m = K3SServerStopArgs{} }
+func (m *K3SServerStopArgs) String() string { return proto.CompactTextString(m) }
+func (*K3SServerStopArgs) ProtoMessage()    {}
+func (*K3SServerStopArgs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad098daeda4239f7, []int{1}
+}
+
+func (m *K3SServerStopArgs) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_K3SServerStopArgs.Unmarshal(m, b)
+}
+func (m *K3SServerStopArgs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_K3SServerStopArgs.Marshal(b, m, deterministic)
+}
+func (m *K3SServerStopArgs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_K3SServerStopArgs.Merge(m, src)
+}
+func (m *K3SServerStopArgs) XXX_Size() int {
+	return xxx_messageInfo_K3SServerStopArgs.Size(m)
+}
+func (m *K3SServerStopArgs) XXX_DiscardUnknown() {
+	xxx_messageInfo_K3SServerStopArgs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_K3SServerStopArgs proto.InternalMessageInfo
+
 type K3SServerState struct {
 	Running              bool     `protobuf:"varint,1,opt,name=Running,proto3" json:"Running,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -82,7 +113,7 @@ func (m *K3SServerState) Reset()         { *m = K3SServerState{} }
 func (m *K3SServerState) String() string { return proto.CompactTextString(m) }
 func (*K3SServerState) ProtoMessage()    {}
 func (*K3SServerState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ad098daeda4239f7, []int{1}
+	return fileDescriptor_ad098daeda4239f7, []int{2}
 }
 
 func (m *K3SServerState) XXX_Unmarshal(b []byte) error {
@@ -112,24 +143,27 @@ func (m *K3SServerState) GetRunning() bool {
 
 func init() {
 	proto.RegisterType((*K3SServer)(nil), "k3sd.K3SServer")
+	proto.RegisterType((*K3SServerStopArgs)(nil), "k3sd.K3SServerStopArgs")
 	proto.RegisterType((*K3SServerState)(nil), "k3sd.K3SServerState")
 }
 
 func init() { proto.RegisterFile("server.proto", fileDescriptor_ad098daeda4239f7) }
 
 var fileDescriptor_ad098daeda4239f7 = []byte{
-	// 167 bytes of a gzipped FileDescriptorProto
+	// 194 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x29, 0x4e, 0x2d, 0x2a,
 	0x4b, 0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0xc9, 0x36, 0x2e, 0x4e, 0x51, 0xf2,
 	0xe4, 0xe2, 0xf4, 0x36, 0x0e, 0x0e, 0x06, 0x4b, 0x08, 0xa9, 0x70, 0xf1, 0xfa, 0xa5, 0x96, 0x94,
 	0xe7, 0x17, 0x65, 0xbb, 0xa4, 0x96, 0x65, 0x26, 0xa7, 0x4a, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06,
 	0xa1, 0x0a, 0x0a, 0x89, 0x71, 0xb1, 0x85, 0xf8, 0x04, 0x07, 0x27, 0xe6, 0x49, 0x30, 0x81, 0xa5,
-	0xa1, 0x3c, 0x25, 0x2d, 0x2e, 0x3e, 0xb8, 0x51, 0xc1, 0x25, 0x89, 0x25, 0xa9, 0x42, 0x12, 0x5c,
-	0xec, 0x41, 0xa5, 0x79, 0x79, 0x99, 0x79, 0xe9, 0x60, 0x93, 0x38, 0x82, 0x60, 0x5c, 0x23, 0x17,
-	0x2e, 0x01, 0xb8, 0x5a, 0xdf, 0xc4, 0xbc, 0xc4, 0xf4, 0xd4, 0x22, 0x21, 0x03, 0x2e, 0xd6, 0xe0,
-	0x92, 0xc4, 0xa2, 0x12, 0x21, 0x7e, 0x3d, 0x90, 0xd3, 0xf4, 0xe0, 0x0a, 0xa4, 0x44, 0xd0, 0x04,
-	0xc0, 0xa6, 0x2b, 0x31, 0x24, 0xb1, 0x81, 0x7d, 0x62, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0x94,
-	0x5f, 0x54, 0xe3, 0xd9, 0x00, 0x00, 0x00,
+	0xa1, 0x3c, 0x25, 0x61, 0x2e, 0x41, 0xb8, 0x51, 0xc1, 0x25, 0xf9, 0x05, 0x8e, 0x45, 0xe9, 0xc5,
+	0x4a, 0x5a, 0x5c, 0x7c, 0x48, 0x82, 0x89, 0x25, 0xa9, 0x42, 0x12, 0x5c, 0xec, 0x41, 0xa5, 0x79,
+	0x79, 0x99, 0x79, 0xe9, 0x60, 0xe3, 0x39, 0x82, 0x60, 0x5c, 0xa3, 0x5a, 0x2e, 0x01, 0xb8, 0x5a,
+	0xdf, 0xc4, 0xbc, 0xc4, 0xf4, 0xd4, 0x22, 0x21, 0x03, 0x2e, 0xd6, 0xe0, 0x92, 0xc4, 0xa2, 0x12,
+	0x21, 0x7e, 0x3d, 0x90, 0x7b, 0xf5, 0xe0, 0x0a, 0xa4, 0x44, 0xd0, 0x04, 0xc0, 0xa6, 0x2b, 0x31,
+	0x08, 0x99, 0x73, 0xb1, 0x80, 0x6c, 0x17, 0x12, 0xc7, 0x90, 0x87, 0x38, 0x09, 0x97, 0xc6, 0x24,
+	0x36, 0x70, 0xb8, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0x8c, 0xd8, 0x45, 0x00, 0x27, 0x01,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -145,6 +179,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type K3SServerManagerClient interface {
 	Start(ctx context.Context, in *K3SServer, opts ...grpc.CallOption) (*K3SServerState, error)
+	Stop(ctx context.Context, in *K3SServerStopArgs, opts ...grpc.CallOption) (*K3SServerState, error)
 }
 
 type k3SServerManagerClient struct {
@@ -164,9 +199,19 @@ func (c *k3SServerManagerClient) Start(ctx context.Context, in *K3SServer, opts 
 	return out, nil
 }
 
+func (c *k3SServerManagerClient) Stop(ctx context.Context, in *K3SServerStopArgs, opts ...grpc.CallOption) (*K3SServerState, error) {
+	out := new(K3SServerState)
+	err := c.cc.Invoke(ctx, "/k3sd.K3SServerManager/Stop", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // K3SServerManagerServer is the server API for K3SServerManager service.
 type K3SServerManagerServer interface {
 	Start(context.Context, *K3SServer) (*K3SServerState, error)
+	Stop(context.Context, *K3SServerStopArgs) (*K3SServerState, error)
 }
 
 // UnimplementedK3SServerManagerServer can be embedded to have forward compatible implementations.
@@ -175,6 +220,9 @@ type UnimplementedK3SServerManagerServer struct {
 
 func (*UnimplementedK3SServerManagerServer) Start(ctx context.Context, req *K3SServer) (*K3SServerState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Start not implemented")
+}
+func (*UnimplementedK3SServerManagerServer) Stop(ctx context.Context, req *K3SServerStopArgs) (*K3SServerState, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
 }
 
 func RegisterK3SServerManagerServer(s *grpc.Server, srv K3SServerManagerServer) {
@@ -199,6 +247,24 @@ func _K3SServerManager_Start_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _K3SServerManager_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(K3SServerStopArgs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(K3SServerManagerServer).Stop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/k3sd.K3SServerManager/Stop",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(K3SServerManagerServer).Stop(ctx, req.(*K3SServerStopArgs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _K3SServerManager_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "k3sd.K3SServerManager",
 	HandlerType: (*K3SServerManagerServer)(nil),
@@ -206,6 +272,10 @@ var _K3SServerManager_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Start",
 			Handler:    _K3SServerManager_Start_Handler,
+		},
+		{
+			MethodName: "Stop",
+			Handler:    _K3SServerManager_Stop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

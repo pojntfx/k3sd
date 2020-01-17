@@ -5,11 +5,14 @@ package k3sd;
 // K3SServerManager manages k3s servers.
 service K3SServerManager {
   rpc Start(K3SServer) returns (K3SServerState) {};
+  rpc Stop(K3SServerStopArgs) returns (K3SServerState) {};
 }
 
 message K3SServer {
   string NetworkDevice = 1;
   string TLSSan = 2;
 }
+
+message K3SServerStopArgs {};
 
 message K3SServerState { bool Running = 1; };
