@@ -62,8 +62,12 @@ https://pojntfx.github.io/k3sd/`,
 		K3SAgentService := svc.K3SAgentManager{
 			ExtractService: extractService,
 		}
+		K3SServerService := svc.K3SServerManager{
+			ExtractService: extractService,
+		}
 
 		k3sd.RegisterK3SAgentManagerServer(server, &K3SAgentService)
+		k3sd.RegisterK3SServerManagerServer(server, &K3SServerService)
 
 		interrupt := make(chan os.Signal, 2)
 		signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
@@ -80,6 +84,7 @@ https://pojntfx.github.io/k3sd/`,
 			log.Info("Gracefully stopping server (this might take a few seconds)")
 
 			agentMsg := "Could not stop k3s agent"
+			serverMsg := "Could not stop k3s server"
 
 			if K3SAgentService.K3SManaged != nil {
 				if err := K3SAgentService.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
@@ -89,6 +94,18 @@ https://pojntfx.github.io/k3sd/`,
 				if K3SAgentService.K3SManaged.IsRunning() {
 					if err := K3SAgentService.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
 						log.Fatal(agentMsg, rz.Err(err))
+					}
+				}
+			}
+
+			if K3SServerService.K3SManaged != nil {
+				if err := K3SServerService.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
+					log.Fatal(serverMsg, rz.Err(err))
+				}
+
+				if K3SServerService.K3SManaged.IsRunning() {
+					if err := K3SServerService.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
+						log.Fatal(serverMsg, rz.Err(err))
 					}
 				}
 			}
