@@ -86,7 +86,7 @@ https://pojntfx.github.io/k3sd/`,
 			agentMsg := "Could not stop k3s agent"
 			serverMsg := "Could not stop k3s server"
 
-			if K3SAgentService.K3SManaged.Instance != nil {
+			if K3SAgentService.K3SManaged != nil && K3SAgentService.K3SManaged.Instance != nil {
 				if err := K3SAgentService.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
 					log.Fatal(agentMsg, rz.Err(err))
 				}
@@ -98,7 +98,7 @@ https://pojntfx.github.io/k3sd/`,
 				}
 			}
 
-			if K3SServerService.K3SManaged.Instance != nil {
+			if K3SServerService.K3SManaged != nil && K3SServerService.K3SManaged.Instance != nil {
 				if err := K3SServerService.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
 					log.Fatal(serverMsg, rz.Err(err))
 				}

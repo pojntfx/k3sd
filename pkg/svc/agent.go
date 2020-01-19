@@ -81,35 +81,35 @@ func (a *K3SAgentManager) Start(_ context.Context, args *k3sd.K3SAgent) (*k3sd.K
 
 // Stop stops the k3s agent.
 func (a *K3SAgentManager) Stop(_ context.Context, _ *k3sd.K3SAgentEmptyArgs) (*k3sd.K3SAgentState, error) {
-	if a.K3SManaged.Instance == nil {
-		msg := "k3s agent hasn't been started yet"
+	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+		log.Info("Stopping k3s agent")
 
-		log.Error(msg)
-
-		return nil, status.Errorf(codes.NotFound, msg)
-	}
-
-	log.Info("Stopping k3s agent")
-
-	if err := a.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
-		log.Error(err.Error())
-
-		return nil, status.Errorf(codes.Unknown, err.Error())
-	}
-
-	if a.K3SManaged.IsRunning() {
-		if err := a.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
+		if err := a.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
 			log.Error(err.Error())
 
 			return nil, status.Errorf(codes.Unknown, err.Error())
 		}
+
+		if a.K3SManaged.IsRunning() {
+			if err := a.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
+				log.Error(err.Error())
+
+				return nil, status.Errorf(codes.Unknown, err.Error())
+			}
+		}
+
+		a.K3SManaged.Instance = nil
+
+		return &k3sd.K3SAgentState{
+			Running: false,
+		}, nil
 	}
 
-	a.K3SManaged.Instance = nil
+	msg := "k3s agent hasn't been started yet"
 
-	return &k3sd.K3SAgentState{
-		Running: false,
-	}, nil
+	log.Error(msg)
+
+	return nil, status.Errorf(codes.NotFound, msg)
 }
 
 // Cleanup cleans the state of the k3s agent.

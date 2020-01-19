@@ -74,34 +74,57 @@ func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 }
 
 // Stop stops the k3s server.
-func (a *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerStopArgs) (*k3sd.K3SServerState, error) {
-	if a.K3SManaged.Instance == nil {
-		msg := "k3s server hasn't been started yet"
+func (a *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerState, error) {
+	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+		log.Info("Stopping k3s server")
+
+		if err := a.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
+			log.Error(err.Error())
+
+			return nil, status.Errorf(codes.Unknown, err.Error())
+		}
+
+		if a.K3SManaged.IsRunning() {
+			if err := a.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
+				log.Error(err.Error())
+
+				return nil, status.Errorf(codes.Unknown, err.Error())
+			}
+		}
+
+		a.K3SManaged.Instance = nil
+
+		return &k3sd.K3SServerState{
+			Running: false,
+		}, nil
+	}
+
+	msg := "k3s server hasn't been started yet"
+
+	log.Error(msg)
+
+	return nil, status.Errorf(codes.NotFound, msg)
+}
+
+// Cleanup cleans the state of the k3s server.
+func (a *K3SServerManager) Cleanup(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerDeletionState, error) {
+	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+		msg := "k3s server is running, can't clean it's state."
 
 		log.Error(msg)
 
-		return nil, status.Errorf(codes.NotFound, msg)
+		return nil, status.Errorf(codes.Unknown, msg)
 	}
 
-	log.Info("Stopping k3s server")
+	log.Info("Cleaning k3s server state")
 
-	if err := a.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
+	if err := a.K3SManaged.CleanupDirs(); err != nil {
 		log.Error(err.Error())
 
 		return nil, status.Errorf(codes.Unknown, err.Error())
 	}
 
-	if a.K3SManaged.IsRunning() {
-		if err := a.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
-			log.Error(err.Error())
-
-			return nil, status.Errorf(codes.Unknown, err.Error())
-		}
-	}
-
-	a.K3SManaged.Instance = nil
-
-	return &k3sd.K3SServerState{
-		Running: false,
+	return &k3sd.K3SServerDeletionState{
+		Deleted: true,
 	}, nil
 }
