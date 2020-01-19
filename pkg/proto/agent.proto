@@ -5,7 +5,8 @@ package k3sd;
 // K3SAgentManager manages k3s agents.
 service K3SAgentManager {
   rpc Start(K3SAgent) returns (K3SAgentState) {};
-  rpc Stop(K3SAgentStopArgs) returns (K3SAgentState) {};
+  rpc Stop(K3SAgentEmptyArgs) returns (K3SAgentState) {};
+  rpc Cleanup(K3SAgentEmptyArgs) returns (K3SAgentDeletionState) {};
 }
 
 message K3SAgent {
@@ -14,6 +15,8 @@ message K3SAgent {
   string ServerURL = 3;
 }
 
-message K3SAgentStopArgs {};
+message K3SAgentEmptyArgs {};
 
 message K3SAgentState { bool Running = 1; };
+
+message K3SAgentDeletionState { bool Deleted = 1; };

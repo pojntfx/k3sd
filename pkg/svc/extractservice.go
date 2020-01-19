@@ -1,9 +1,9 @@
 package svc
 
 import (
-	"os"
 	_ "github.com/pojntfx/k3sd/pkg/svc/statik" // Embedded k3s binary
 	"github.com/rakyll/statik/fs"
+	"os"
 )
 
 // ExtractService is a service that extracts binaries.
