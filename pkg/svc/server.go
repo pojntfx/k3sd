@@ -3,10 +3,12 @@ package svc
 import (
 	"context"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
+	"github.com/pojntfx/k3sd/pkg/utils"
 	"github.com/pojntfx/k3sd/pkg/workers"
 	"gitlab.com/bloom42/libs/rz-go/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"path/filepath"
 )
 
 // K3SServerManager manages k3s servers.
@@ -18,10 +20,25 @@ type K3SServerManager struct {
 
 // Start starts the k3s server.
 func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd.K3SServerState, error) {
+	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+		msg := "k3s server is already running."
+
+		log.Error(msg)
+
+		return nil, status.Errorf(codes.AlreadyExists, msg)
+	}
+
+	dirCleanupWorker := utils.DirCleanupWorker{
+		DirsToClean: []string{
+			filepath.Join("/var", "lib", "rancher", "k3s"),
+			filepath.Join("/etc", "rancher", "k3s")},
+	}
+
 	k3s := workers.K3SServer{
-		BinaryDir:     a.BinaryDir,
-		NetworkDevice: args.GetNetworkDevice(),
-		TLSSan:        args.GetTLSSan(),
+		DirCleanupWorker: dirCleanupWorker,
+		BinaryDir:        a.BinaryDir,
+		NetworkDevice:    args.GetNetworkDevice(),
+		TLSSan:           args.GetTLSSan(),
 	}
 
 	if err := k3s.Start(); err != nil {
@@ -58,7 +75,7 @@ func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 
 // Stop stops the k3s server.
 func (a *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerStopArgs) (*k3sd.K3SServerState, error) {
-	if a.K3SManaged == nil {
+	if a.K3SManaged.Instance == nil {
 		msg := "k3s server hasn't been started yet"
 
 		log.Error(msg)
@@ -82,7 +99,7 @@ func (a *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerStopArgs) (*
 		}
 	}
 
-	a.K3SManaged = nil
+	a.K3SManaged.Instance = nil
 
 	return &k3sd.K3SServerState{
 		Running: false,

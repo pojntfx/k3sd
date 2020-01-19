@@ -1,7 +1,8 @@
 package workers
 
 import (
-	"github.com/pojntfx/go-isc-dhcp/pkg/utils"
+	dhcpUtils "github.com/pojntfx/go-isc-dhcp/pkg/utils"
+	"github.com/pojntfx/k3sd/pkg/utils"
 	"os"
 	"os/exec"
 	"syscall"
@@ -9,7 +10,8 @@ import (
 
 // K3SAgent is the k3s agent.
 type K3SAgent struct {
-	utils.ProcessWorker
+	dhcpUtils.ProcessWorker
+	utils.DirCleanupWorker
 	BinaryDir     string
 	NetworkDevice string
 	Token         string

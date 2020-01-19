@@ -8,10 +8,12 @@ package svc
 import (
 	"context"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
+	"github.com/pojntfx/k3sd/pkg/utils"
 	"github.com/pojntfx/k3sd/pkg/workers"
 	"gitlab.com/bloom42/libs/rz-go/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"path/filepath"
 )
 
 // K3SAgentManager manages k3s agents.
@@ -23,11 +25,26 @@ type K3SAgentManager struct {
 
 // Start starts the k3s agent.
 func (a *K3SAgentManager) Start(_ context.Context, args *k3sd.K3SAgent) (*k3sd.K3SAgentState, error) {
+	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+		msg := "k3s agent is already running."
+
+		log.Error(msg)
+
+		return nil, status.Errorf(codes.AlreadyExists, msg)
+	}
+
+	dirCleanupWorker := utils.DirCleanupWorker{
+		DirsToClean: []string{
+			filepath.Join("/var", "lib", "rancher", "k3s"),
+			filepath.Join("/etc", "rancher", "k3s")},
+	}
+
 	k3s := workers.K3SAgent{
-		BinaryDir:     a.BinaryDir,
-		NetworkDevice: args.GetNetworkDevice(),
-		Token:         args.GetToken(),
-		ServerURL:     args.GetServerURL(),
+		DirCleanupWorker: dirCleanupWorker,
+		BinaryDir:        a.BinaryDir,
+		NetworkDevice:    args.GetNetworkDevice(),
+		Token:            args.GetToken(),
+		ServerURL:        args.GetServerURL(),
 	}
 
 	if err := k3s.Start(); err != nil {
@@ -63,8 +80,8 @@ func (a *K3SAgentManager) Start(_ context.Context, args *k3sd.K3SAgent) (*k3sd.K
 }
 
 // Stop stops the k3s agent.
-func (a *K3SAgentManager) Stop(_ context.Context, _ *k3sd.K3SAgentStopArgs) (*k3sd.K3SAgentState, error) {
-	if a.K3SManaged == nil {
+func (a *K3SAgentManager) Stop(_ context.Context, _ *k3sd.K3SAgentEmptyArgs) (*k3sd.K3SAgentState, error) {
+	if a.K3SManaged.Instance == nil {
 		msg := "k3s agent hasn't been started yet"
 
 		log.Error(msg)
@@ -88,9 +105,32 @@ func (a *K3SAgentManager) Stop(_ context.Context, _ *k3sd.K3SAgentStopArgs) (*k3
 		}
 	}
 
-	a.K3SManaged = nil
+	a.K3SManaged.Instance = nil
 
 	return &k3sd.K3SAgentState{
 		Running: false,
+	}, nil
+}
+
+// Cleanup cleans the state of the k3s agent.
+func (a *K3SAgentManager) Cleanup(_ context.Context, _ *k3sd.K3SAgentEmptyArgs) (*k3sd.K3SAgentDeletionState, error) {
+	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+		msg := "k3s agent is running, can't clean it's state."
+
+		log.Error(msg)
+
+		return nil, status.Errorf(codes.Unknown, msg)
+	}
+
+	log.Info("Cleaning k3s agent state")
+
+	if err := a.K3SManaged.CleanupDirs(); err != nil {
+		log.Error(err.Error())
+
+		return nil, status.Errorf(codes.Unknown, err.Error())
+	}
+
+	return &k3sd.K3SAgentDeletionState{
+		Deleted: true,
 	}, nil
 }
