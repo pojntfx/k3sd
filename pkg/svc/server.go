@@ -118,7 +118,7 @@ func (s *K3SServerManager) Cleanup(_ context.Context, _ *k3sd.K3SServerEmptyArgs
 		return nil, status.Errorf(codes.Unknown, msg)
 	}
 
-	log.Info("Cleaning k3s server state")
+	log.Info("Cleaning k3s server state and config")
 
 	if err := s.K3SManaged.CleanupDirs(); err != nil {
 		log.Error(err.Error())
