@@ -8,6 +8,7 @@ service K3SServerManager {
   rpc Stop(K3SServerEmptyArgs) returns (K3SServerState) {};
   rpc Cleanup(K3SServerEmptyArgs) returns (K3SServerDeletionState) {};
   rpc GetKubeconfig(K3SServerEmptyArgs) returns (K3SServerKubeconfig) {};
+  rpc GetToken(K3SServerEmptyArgs) returns (K3SServerToken) {};
 }
 
 message K3SServer {
@@ -21,4 +22,6 @@ message K3SServerState { bool Running = 1; };
 
 message K3SServerDeletionState { bool Deleted = 1; };
 
-message K3SServerKubeconfig { string Content = 1; };
+message K3SServerKubeconfig { string Kubeconfig = 1; };
+
+message K3SServerToken { string Token = 1; };
