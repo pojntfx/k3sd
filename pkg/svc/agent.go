@@ -7,13 +7,13 @@ package svc
 
 import (
 	"context"
+
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
 	"github.com/pojntfx/k3sd/pkg/utils"
 	"github.com/pojntfx/k3sd/pkg/workers"
 	"gitlab.com/bloom42/libs/rz-go/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"path/filepath"
 )
 
 // K3SAgentManager manages k3s agents.
@@ -35,8 +35,8 @@ func (a *K3SAgentManager) Start(_ context.Context, args *k3sd.K3SAgent) (*k3sd.K
 
 	dirCleanupWorker := utils.DirCleanupWorker{
 		DirsToClean: []string{
-			filepath.Join("/var", "lib", "rancher", "k3s"),
-			filepath.Join("/etc", "rancher", "k3s")},
+			DataPath,
+			ConfigPath},
 	}
 
 	k3s := workers.K3SAgent{
