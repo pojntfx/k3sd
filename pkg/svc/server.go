@@ -38,6 +38,7 @@ func (s *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 		DirCleanupWorker: dirCleanupWorker,
 		BinaryDir:        s.BinaryDir,
 		KubeconfigPath:   filepath.Join("/etc", "rancher", "k3s", "k3s.yaml"),
+		TokenPath:        filepath.Join("/var", "lib", "rancher", "k3s", "server", "token"),
 		NetworkDevice:    args.GetNetworkDevice(),
 		TLSSan:           args.GetTLSSan(),
 	}
@@ -140,6 +141,20 @@ func (s *K3SServerManager) GetKubeconfig(_ context.Context, _ *k3sd.K3SServerEmp
 	}
 
 	return &k3sd.K3SServerKubeconfig{
-		Content: kubeconfig,
+		Kubeconfig: kubeconfig,
+	}, nil
+}
+
+// GetToken returns the token for the k3s server.
+func (s *K3SServerManager) GetToken(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerToken, error) {
+	token, err := s.K3SManaged.GetToken()
+	if err != nil {
+		log.Error(err.Error())
+
+		return nil, status.Errorf(codes.NotFound, err.Error())
+	}
+
+	return &k3sd.K3SServerToken{
+		Token: token,
 	}, nil
 }

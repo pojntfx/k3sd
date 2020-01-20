@@ -18,6 +18,7 @@ type K3SServer struct {
 	NetworkDevice  string
 	TLSSan         string
 	KubeconfigPath string
+	TokenPath      string
 }
 
 // Start starts the the k3s server.
@@ -49,6 +50,20 @@ func (s *K3SServer) GetKubeconfig() (string, error) {
 	}
 
 	data, err := ioutil.ReadFile(s.KubeconfigPath)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}
+
+// GetToken returns the token for the server.
+func (s *K3SServer) GetToken() (string, error) {
+	if _, err := os.Stat(s.KubeconfigPath); os.IsNotExist(err) {
+		return "", errors.New("could not find token")
+	}
+
+	data, err := ioutil.ReadFile(s.TokenPath)
 	if err != nil {
 		return "", err
 	}
