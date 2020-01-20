@@ -30,15 +30,15 @@ func (s *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 
 	dirCleanupWorker := utils.DirCleanupWorker{
 		DirsToClean: []string{
-			filepath.Join("/var", "lib", "rancher", "k3s"),
-			filepath.Join("/etc", "rancher", "k3s")},
+			DataPath,
+			ConfigPath},
 	}
 
 	k3s := workers.K3SServer{
 		DirCleanupWorker: dirCleanupWorker,
 		BinaryDir:        s.BinaryDir,
-		KubeconfigPath:   filepath.Join("/etc", "rancher", "k3s", "k3s.yaml"),
-		TokenPath:        filepath.Join("/var", "lib", "rancher", "k3s", "server", "token"),
+		KubeconfigPath:   filepath.Join(ConfigPath, "k3s.yaml"),
+		TokenPath:        filepath.Join(DataPath, "server", "token"),
 		NetworkDevice:    args.GetNetworkDevice(),
 		TLSSan:           args.GetTLSSan(),
 	}
