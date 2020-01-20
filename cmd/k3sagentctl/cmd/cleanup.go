@@ -15,7 +15,7 @@ import (
 var cleanupCmd = &cobra.Command{
 	Use:     "cleanup",
 	Aliases: []string{"c"},
-	Short:   "Clean up a server",
+	Short:   "Clean up an agent",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !(viper.GetString(configFileKey) == configFileDefault) {
 			viper.SetConfigFile(viper.GetString(configFileKey))
@@ -31,16 +31,16 @@ var cleanupCmd = &cobra.Command{
 		}
 		defer conn.Close()
 
-		client := k3sd.NewK3SServerManagerClient(conn)
+		client := k3sd.NewK3SAgentManagerClient(conn)
 
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		if _, err := client.Cleanup(ctx, &k3sd.K3SServerEmptyArgs{}); err != nil {
+		if _, err := client.Cleanup(ctx, &k3sd.K3SAgentEmptyArgs{}); err != nil {
 			return err
 		}
 
-		fmt.Println("server cleaned up")
+		fmt.Println("agent cleaned up")
 
 		return nil
 	},
