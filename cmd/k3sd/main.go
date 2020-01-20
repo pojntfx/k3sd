@@ -4,6 +4,8 @@ import (
 	constants "github.com/pojntfx/k3sd/cmd"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
 	"github.com/pojntfx/k3sd/pkg/svc"
+	"github.com/pojntfx/k3sd/pkg/utils"
+	"github.com/pojntfx/k3sd/pkg/workers"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gitlab.com/bloom42/libs/rz-go"
@@ -59,11 +61,25 @@ https://pojntfx.github.io/k3sd/`,
 			BinaryInternalPath: "/k3s",
 		}
 
+		dirCleanupWorker := utils.DirCleanupWorker{
+			DirsToClean: []string{
+				svc.DataPath,
+				svc.ConfigPath},
+		}
+
 		K3SAgentService := svc.K3SAgentManager{
 			ExtractService: extractService,
+			K3SManaged: &workers.K3SAgent{ // Minimal worker; just enough to enable cleanups. Internal null pointer guards are in place.
+				DirCleanupWorker: dirCleanupWorker,
+			},
 		}
 		K3SServerService := svc.K3SServerManager{
 			ExtractService: extractService,
+			K3SManaged: &workers.K3SServer{ // Minimal worker; just enough to enable cleanups & to get the Kubeconfig and Token. Internal null pointer guards are in place.
+				DirCleanupWorker: dirCleanupWorker,
+				KubeconfigPath:   svc.KubeconfigPath,
+				TokenPath:        svc.TokenPath,
+			},
 		}
 
 		k3sd.RegisterK3SAgentManagerServer(server, &K3SAgentService)
