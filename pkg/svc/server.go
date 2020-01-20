@@ -19,8 +19,8 @@ type K3SServerManager struct {
 }
 
 // Start starts the k3s server.
-func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd.K3SServerState, error) {
-	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+func (s *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd.K3SServerState, error) {
+	if s.K3SManaged != nil && s.K3SManaged.Instance != nil {
 		msg := "k3s server is already running."
 
 		log.Error(msg)
@@ -36,7 +36,8 @@ func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 
 	k3s := workers.K3SServer{
 		DirCleanupWorker: dirCleanupWorker,
-		BinaryDir:        a.BinaryDir,
+		BinaryDir:        s.BinaryDir,
+		KubeconfigPath:   filepath.Join("/etc", "rancher", "k3s", "k3s.yaml"),
 		NetworkDevice:    args.GetNetworkDevice(),
 		TLSSan:           args.GetTLSSan(),
 	}
@@ -66,7 +67,7 @@ func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 		}
 	}(&k3s)
 
-	a.K3SManaged = &k3s
+	s.K3SManaged = &k3s
 
 	return &k3sd.K3SServerState{
 		Running: true,
@@ -74,25 +75,25 @@ func (a *K3SServerManager) Start(_ context.Context, args *k3sd.K3SServer) (*k3sd
 }
 
 // Stop stops the k3s server.
-func (a *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerState, error) {
-	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+func (s *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerState, error) {
+	if s.K3SManaged != nil && s.K3SManaged.Instance != nil {
 		log.Info("Stopping k3s server")
 
-		if err := a.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
+		if err := s.K3SManaged.DisableAutoRestart(); err != nil { // Manually disable auto restart; disables crash recovery even if process is not running
 			log.Error(err.Error())
 
 			return nil, status.Errorf(codes.Unknown, err.Error())
 		}
 
-		if a.K3SManaged.IsRunning() {
-			if err := a.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
+		if s.K3SManaged.IsRunning() {
+			if err := s.K3SManaged.Stop(); err != nil { // Stop is sync, so no need to `.Wait()`
 				log.Error(err.Error())
 
 				return nil, status.Errorf(codes.Unknown, err.Error())
 			}
 		}
 
-		a.K3SManaged.Instance = nil
+		s.K3SManaged.Instance = nil
 
 		return &k3sd.K3SServerState{
 			Running: false,
@@ -107,8 +108,8 @@ func (a *K3SServerManager) Stop(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (
 }
 
 // Cleanup cleans the state of the k3s server.
-func (a *K3SServerManager) Cleanup(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerDeletionState, error) {
-	if a.K3SManaged != nil && a.K3SManaged.Instance != nil {
+func (s *K3SServerManager) Cleanup(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerDeletionState, error) {
+	if s.K3SManaged != nil && s.K3SManaged.Instance != nil {
 		msg := "k3s server is running, can't clean it's state."
 
 		log.Error(msg)
@@ -118,7 +119,7 @@ func (a *K3SServerManager) Cleanup(_ context.Context, _ *k3sd.K3SServerEmptyArgs
 
 	log.Info("Cleaning k3s server state")
 
-	if err := a.K3SManaged.CleanupDirs(); err != nil {
+	if err := s.K3SManaged.CleanupDirs(); err != nil {
 		log.Error(err.Error())
 
 		return nil, status.Errorf(codes.Unknown, err.Error())
@@ -126,5 +127,19 @@ func (a *K3SServerManager) Cleanup(_ context.Context, _ *k3sd.K3SServerEmptyArgs
 
 	return &k3sd.K3SServerDeletionState{
 		Deleted: true,
+	}, nil
+}
+
+// GetKubeconfig returns the Kubeconfig for the k3s server.
+func (s *K3SServerManager) GetKubeconfig(_ context.Context, _ *k3sd.K3SServerEmptyArgs) (*k3sd.K3SServerKubeconfig, error) {
+	kubeconfig, err := s.K3SManaged.GetKubeconfig()
+	if err != nil {
+		log.Error(err.Error())
+
+		return nil, status.Errorf(codes.NotFound, err.Error())
+	}
+
+	return &k3sd.K3SServerKubeconfig{
+		Content: kubeconfig,
 	}, nil
 }

@@ -7,6 +7,7 @@ service K3SServerManager {
   rpc Start(K3SServer) returns (K3SServerState) {};
   rpc Stop(K3SServerEmptyArgs) returns (K3SServerState) {};
   rpc Cleanup(K3SServerEmptyArgs) returns (K3SServerDeletionState) {};
+  rpc GetKubeconfig(K3SServerEmptyArgs) returns (K3SServerKubeconfig) {};
 }
 
 message K3SServer {
@@ -19,3 +20,5 @@ message K3SServerEmptyArgs {};
 message K3SServerState { bool Running = 1; };
 
 message K3SServerDeletionState { bool Deleted = 1; };
+
+message K3SServerKubeconfig { string Content = 1; };
