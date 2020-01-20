@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-var cleanupCmd = &cobra.Command{
-	Use:     "cleanup",
-	Aliases: []string{"c"},
-	Short:   "Cleanup a server",
+var stopCmd = &cobra.Command{
+	Use:     "stop",
+	Aliases: []string{"d"},
+	Short:   "Stop an agent",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !(viper.GetString(configFileKey) == configFileDefault) {
 			viper.SetConfigFile(viper.GetString(configFileKey))
@@ -31,16 +31,16 @@ var cleanupCmd = &cobra.Command{
 		}
 		defer conn.Close()
 
-		client := k3sd.NewK3SServerManagerClient(conn)
+		client := k3sd.NewK3SAgentManagerClient(conn)
 
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		if _, err := client.Cleanup(ctx, &k3sd.K3SServerEmptyArgs{}); err != nil {
+		if _, err := client.Stop(ctx, &k3sd.K3SAgentEmptyArgs{}); err != nil {
 			return err
 		}
 
-		fmt.Println("server cleaned up")
+		fmt.Println("agent stopped")
 
 		return nil
 	},
@@ -52,14 +52,14 @@ func init() {
 		configFileFlag     string
 	)
 
-	cleanupCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, "Host:port of the k3sd server to use.")
-	cleanupCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
+	stopCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, "Host:port of the k3sd server to use.")
+	stopCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
 
-	if err := viper.BindPFlags(cleanupCmd.PersistentFlags()); err != nil {
+	if err := viper.BindPFlags(stopCmd.PersistentFlags()); err != nil {
 		log.Fatal(constants.CouldNotBindFlagsErrorMessage, rz.Err(err))
 	}
 
 	viper.AutomaticEnv()
 
-	rootCmd.AddCommand(cleanupCmd)
+	rootCmd.AddCommand(stopCmd)
 }
