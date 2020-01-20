@@ -1,0 +1,4 @@
+k3sagent:
+  networkDevice: edge0
+  token: asfd
+  serverUrl: https://localhost:6443
