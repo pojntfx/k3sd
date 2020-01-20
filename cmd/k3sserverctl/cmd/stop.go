@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-
 	constants "github.com/pojntfx/k3sd/cmd"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
 	"github.com/spf13/cobra"
