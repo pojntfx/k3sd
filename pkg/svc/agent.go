@@ -122,7 +122,7 @@ func (a *K3SAgentManager) Cleanup(_ context.Context, _ *k3sd.K3SAgentEmptyArgs) 
 		return nil, status.Errorf(codes.Unknown, msg)
 	}
 
-	log.Info("Cleaning k3s agent state")
+	log.Info("Cleaning k3s agent state and config")
 
 	if err := a.K3SManaged.CleanupDirs(); err != nil {
 		log.Error(err.Error())
