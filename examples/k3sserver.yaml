@@ -1,0 +1,3 @@
+k3sserver:
+  networkDevice: edge0
+  tlsSan: 192.168.1.10
