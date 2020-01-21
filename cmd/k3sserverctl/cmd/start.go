@@ -58,7 +58,7 @@ func init() {
 	)
 
 	startCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.K3SDHostPortDefaultMessage)
-	startCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
+	startCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.K3SDConfigurationFileMessage)
 	startCmd.PersistentFlags().StringVarP(&networkDeviceFlag, networkDeviceKey, "d", "edge0", "The name of the network device to use.")
 	startCmd.PersistentFlags().StringVarP(&tlsSanFlag, tlsSanKey, "i", "192.168.1.10", "Additional IP to generate TLS certificates for.")
 

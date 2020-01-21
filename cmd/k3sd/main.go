@@ -153,7 +153,7 @@ func init() {
 		hostPortFlag   string
 	)
 
-	rootCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
+	rootCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.K3SDConfigurationFileMessage)
 	rootCmd.PersistentFlags().StringVarP(&hostPortFlag, listenHostPortKey, "l", constants.K3SDHostPortDefault, "TCP listen host:port.")
 
 	if err := viper.BindPFlags(rootCmd.PersistentFlags()); err != nil {
