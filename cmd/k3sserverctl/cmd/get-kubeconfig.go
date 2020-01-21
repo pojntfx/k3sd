@@ -53,8 +53,8 @@ func init() {
 		configFileFlag     string
 	)
 
-	getKubeconfigCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.K3SDHostPortDefaultMessage)
-	getKubeconfigCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.K3SDConfigurationFileMessage)
+	getKubeconfigCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)
+	getKubeconfigCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 
 	if err := viper.BindPFlags(getKubeconfigCmd.PersistentFlags()); err != nil {
 		log.Fatal(constants.CouldNotBindFlagsErrorMessage, rz.Err(err))
