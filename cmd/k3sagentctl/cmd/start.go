@@ -59,8 +59,8 @@ func init() {
 		serverUrlFlag      string
 	)
 
-	startCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.K3SDHostPortDefaultMessage)
-	startCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.K3SDConfigurationFileMessage)
+	startCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)
+	startCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 	startCmd.PersistentFlags().StringVarP(&networkDeviceFlag, networkDeviceKey, "d", "edge0", "The name of the network device to use.")
 	startCmd.PersistentFlags().StringVarP(&tokenFlag, tokenKey, "t", "asdf", "The token to authenticate with.")
 	startCmd.PersistentFlags().StringVarP(&serverUrlFlag, serverUrlKey, "u", "https://localhost:6443", "The URL of the server to connect to.")
