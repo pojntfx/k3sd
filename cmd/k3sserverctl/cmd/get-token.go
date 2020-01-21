@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-var getKubeconfigCmd = &cobra.Command{
-	Use:     "kubeconfig",
-	Aliases: []string{"k"},
-	Short:   "Get a kubeconfig",
+var getTokenCmd = &cobra.Command{
+	Use:     "token",
+	Aliases: []string{"t"},
+	Short:   "Get a token",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !(viper.GetString(configFileKey) == configFileDefault) {
 			viper.SetConfigFile(viper.GetString(configFileKey))
@@ -36,12 +36,12 @@ var getKubeconfigCmd = &cobra.Command{
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		kubeconfig, err := client.GetKubeconfig(ctx, &k3sd.K3SServerEmptyArgs{})
+		token, err := client.GetToken(ctx, &k3sd.K3SServerEmptyArgs{})
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(kubeconfig.GetKubeconfig())
+		fmt.Print(token.GetToken())
 
 		return nil
 	},
@@ -53,14 +53,14 @@ func init() {
 		configFileFlag     string
 	)
 
-	getKubeconfigCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, "Host:port of the k3sd server to use.")
-	getKubeconfigCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
+	getTokenCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, "Host:port of the k3sd server to use.")
+	getTokenCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
 
-	if err := viper.BindPFlags(getKubeconfigCmd.PersistentFlags()); err != nil {
+	if err := viper.BindPFlags(getTokenCmd.PersistentFlags()); err != nil {
 		log.Fatal(constants.CouldNotBindFlagsErrorMessage, rz.Err(err))
 	}
 
 	viper.AutomaticEnv()
 
-	getCmd.AddCommand(getKubeconfigCmd)
+	getCmd.AddCommand(getTokenCmd)
 }
