@@ -52,7 +52,7 @@ func init() {
 		configFileFlag     string
 	)
 
-	cleanupCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, "Host:port of the k3sd server to use.")
+	cleanupCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.K3SDHostPortDefaultMessage)
 	cleanupCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, "Configuration file to use.")
 
 	if err := viper.BindPFlags(cleanupCmd.PersistentFlags()); err != nil {
