@@ -8,3 +8,8 @@ const (
 	networkDeviceKey  = keyPrefix + "networkDevice"
 	tlsSanKey         = keyPrefix + "tlsSan"
 )
+
+var (
+	serverHostPortFlag string
+	configFileFlag     string
+)

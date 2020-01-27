@@ -48,11 +48,6 @@ var getKubeconfigCmd = &cobra.Command{
 }
 
 func init() {
-	var (
-		serverHostPortFlag string
-		configFileFlag     string
-	)
-
 	getKubeconfigCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)
 	getKubeconfigCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 

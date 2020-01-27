@@ -47,11 +47,6 @@ var stopCmd = &cobra.Command{
 }
 
 func init() {
-	var (
-		serverHostPortFlag string
-		configFileFlag     string
-	)
-
 	stopCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)
 	stopCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 

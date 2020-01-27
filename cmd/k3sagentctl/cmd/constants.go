@@ -9,3 +9,8 @@ const (
 	tokenKey          = keyPrefix + "token"
 	serverUrlKey      = keyPrefix + "serverUrl"
 )
+
+var (
+	serverHostPortFlag string
+	configFileFlag     string
+)
