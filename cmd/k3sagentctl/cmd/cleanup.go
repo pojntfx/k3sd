@@ -47,11 +47,6 @@ var cleanupCmd = &cobra.Command{
 }
 
 func init() {
-	var (
-		serverHostPortFlag string
-		configFileFlag     string
-	)
-
 	cleanupCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)
 	cleanupCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 

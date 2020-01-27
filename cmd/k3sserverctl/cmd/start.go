@@ -51,10 +51,8 @@ var startCmd = &cobra.Command{
 
 func init() {
 	var (
-		serverHostPortFlag string
-		configFileFlag     string
-		networkDeviceFlag  string
-		tlsSanFlag         string
+		networkDeviceFlag string
+		tlsSanFlag        string
 	)
 
 	startCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)

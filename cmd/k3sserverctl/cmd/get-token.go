@@ -48,11 +48,6 @@ var getTokenCmd = &cobra.Command{
 }
 
 func init() {
-	var (
-		serverHostPortFlag string
-		configFileFlag     string
-	)
-
 	getTokenCmd.PersistentFlags().StringVarP(&serverHostPortFlag, serverHostPortKey, "s", constants.K3SDHostPortDefault, constants.HostPortDocs)
 	getTokenCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 
