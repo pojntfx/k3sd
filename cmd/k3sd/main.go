@@ -1,6 +1,13 @@
 package main
 
 import (
+	"net"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"strings"
+	"syscall"
+
 	constants "github.com/pojntfx/k3sd/cmd"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
 	"github.com/pojntfx/k3sd/pkg/svc"
@@ -12,16 +19,10 @@ import (
 	"gitlab.com/bloom42/libs/rz-go/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"net"
-	"os"
-	"os/signal"
-	"path/filepath"
-	"strings"
-	"syscall"
 )
 
 const (
-	keyPrefix         = "k3sdd."
+	keyPrefix         = "k3sd."
 	configFileDefault = ""
 	configFileKey     = keyPrefix + "configFile"
 	listenHostPortKey = keyPrefix + "listenHostPort"
