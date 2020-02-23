@@ -36,8 +36,8 @@ Usage:
 
 Flags:
   -h, --help                          help for k3sd
-  -f, --k3sdd.configFile string       Configuration file to use.
-  -l, --k3sdd.listenHostPort string   TCP listen host:port. (default "localhost:1340")
+  -f, --k3sd.configFile string       Configuration file to use.
+  -l, --k3sd.listenHostPort string   TCP listen host:port. (default "localhost:1340")
 ```
 
 ### Client CLIs

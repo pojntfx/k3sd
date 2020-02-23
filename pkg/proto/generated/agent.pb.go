@@ -219,11 +219,11 @@ var fileDescriptor_56ede974c0020f77 = []byte{
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // K3SAgentManagerClient is the client API for K3SAgentManager service.
 //
@@ -235,10 +235,10 @@ type K3SAgentManagerClient interface {
 }
 
 type k3SAgentManagerClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewK3SAgentManagerClient(cc *grpc.ClientConn) K3SAgentManagerClient {
+func NewK3SAgentManagerClient(cc grpc.ClientConnInterface) K3SAgentManagerClient {
 	return &k3SAgentManagerClient{cc}
 }
 
