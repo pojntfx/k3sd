@@ -1,7 +1,11 @@
 package svc
 
-//go:generate sh -c "mkdir -p ../proto/generated && protoc --go_out=paths=source_relative,plugins=grpc:../proto/generated -I=../proto ../proto/*.proto"
-//go:generate sh -c "rm -rf k3s statik; mkdir -p k3s/dist/artifacts; curl -Lo k3s/dist/artifacts/k3s https://github.com/rancher/k3s/releases/latest/download/k3s; statik -src k3s/dist/artifacts"
+//go:generate mkdir -p ../proto/generated
+//go:generate sh -c "protoc --go_out=paths=source_relative,plugins=grpc:../proto/generated -I=../proto ../proto/*.proto"
+//go:generate rm -rf k3s statik
+//go:generate mkdir -p k3s/dist/artifacts
+//go:generate sh -c "if [ \"$TARGETPLATFORM\" = \"linux/arm64\" ]; then curl -Lo k3s/dist/artifacts/k3s https://github.com/rancher/k3s/releases/latest/download/k3s-arm64; else curl -Lo k3s/dist/artifacts/k3s https://github.com/rancher/k3s/releases/latest/download/k3s; fi"
+//go:generate statik -src k3s/dist/artifacts
 // In case you want to compile `k3s` yourself, uncomment the line below
 ////go:generate sh -c "rm -rf k3s statik; git clone --depth 1 https://github.com/rancher/k3s.git; cd k3s; make; mkdir -p dist; cd ../; statik -src k3s/dist/artifacts"
 
