@@ -2,6 +2,8 @@
 
 Management daemon and CLIs for k3s servers and agents.
 
+[![pipeline status](https://gitlab.com/pojntfx/k3sd/badges/master/pipeline.svg)](https://gitlab.com/pojntfx/k3sd/commits/master)
+
 ## Overview
 
 `k3sd` is a collection of a management daemon and CLIs for the k3s Kubernetes distribution. k3s is built of two main components; servers and agents. In a similar way, `k3sd` is built of multiple components. The components are:
@@ -13,6 +15,12 @@ Management daemon and CLIs for k3s servers and agents.
 `k3sd` bundles the `k3s` binary into it's own binary and extracts it on startup, so there is no need to install it manually.
 
 ## Installation
+
+### Prebuilt Binaries
+
+Prebuilt binaries are available on the [releases page](https://github.com/pojntfx/k3sd/releases/latest).
+
+### Go Package
 
 A Go package [is available](https://godoc.org/github.com/pojntfx/k3sd). In order to use it, you have to `go generate` it first.
 
