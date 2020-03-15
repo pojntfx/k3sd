@@ -1,0 +1,187 @@
+.dibsJob: &dibsJob
+  image: docker:stable
+  services:
+    - name: docker:dind
+      command:
+        - "--experimental"
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+  before_script:
+    # Install curl and tar
+    - apk add -u curl tar
+    # Install qemu-user-static
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    # Install buildx
+    - curl -Lo /tmp/docker-buildx https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-amd64
+    - mkdir -p ~/.docker/cli-plugins/
+    - install /tmp/docker-buildx ~/.docker/cli-plugins
+    - docker buildx create --name dibs
+    - docker buildx use dibs
+    - docker buildx inspect --bootstrap
+    # Install Helm
+    - curl -L https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz | tar -zvxf - linux-amd64/helm -O >/tmp/helm
+    - install /tmp/helm /usr/local/bin
+    # Install ghr
+    - curl -L https://github.com/tcnksm/ghr/releases/download/v0.13.0/ghr_v0.13.0_linux_amd64.tar.gz | tar -zvxf - ghr_v0.13.0_linux_amd64/ghr
+    - install ghr_v0.13.0_linux_amd64/ghr /usr/local/bin
+    # Install Chart Releaser
+    - curl -L https://github.com/helm/chart-releaser/releases/download/v0.2.3/chart-releaser_0.2.3_linux_amd64.tar.gz | tar -zvxf - cr
+    - install cr /usr/local/bin
+    # Install dibs
+    - curl -Lo /tmp/dibs https://github.com/pojntfx/dibs/releases/latest/download/dibs-linux-amd64
+    - install /tmp/dibs /usr/local/bin
+    # Login to Docker Hub
+    - docker login ${DOCKER_REGISTRY} --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD}
+
+stages:
+  # Unit tests
+  - k3sd:unitTest
+  - k3sserverctl:unitTest
+  - k3sagentctl:unitTest
+  # Integration tests
+  - k3sd:integrationTest
+  - k3sserverctl:integrationTest
+  - k3sagentctl:integrationTest
+  # Build and push binaries
+  - k3sd:buildAndPushBinaries
+  - k3sserverctl:buildAndPushBinaries
+  - k3sagentctl:buildAndPushBinaries
+
+# Unit tests
+k3sd:unitTestAMD64:
+  <<: *dibsJob
+  stage: k3sd:unitTest
+  script:
+    - dibs -unitTests -target k3sd-linux -platform linux/amd64 -docker
+k3sd:unitTestARM64:
+  <<: *dibsJob
+  stage: k3sd:unitTest
+  script:
+    - dibs -unitTests -target k3sd-linux -platform linux/arm64 -docker
+
+k3sserverctl:unitTestAMD64:
+  <<: *dibsJob
+  stage: k3sserverctl:unitTest
+  script:
+    - dibs -unitTests -target k3sserverctl-linux -platform linux/amd64 -docker
+k3sserverctl:unitTestARM64:
+  <<: *dibsJob
+  stage: k3sserverctl:unitTest
+  script:
+    - dibs -unitTests -target k3sserverctl-linux -platform linux/arm64 -docker
+
+k3sagentctl:unitTestAMD64:
+  <<: *dibsJob
+  stage: k3sagentctl:unitTest
+  script:
+    - dibs -unitTests -target k3sagentctl-linux -platform linux/amd64 -docker
+k3sagentctl:unitTestARM64:
+  <<: *dibsJob
+  stage: k3sagentctl:unitTest
+  script:
+    - dibs -unitTests -target k3sagentctl-linux -platform linux/arm64 -docker
+
+# Integration tests
+k3sd:integrationTestAMD64:
+  <<: *dibsJob
+  stage: k3sd:integrationTest
+  script:
+    - dibs -integrationTests -target k3sd-linux -platform linux/amd64 -docker
+k3sd:integrationTestARM64:
+  <<: *dibsJob
+  stage: k3sd:integrationTest
+  script:
+    - dibs -integrationTests -target k3sd-linux -platform linux/arm64 -docker
+
+k3sserverctl:integrationTestAMD64:
+  <<: *dibsJob
+  stage: k3sserverctl:integrationTest
+  script:
+    - dibs -integrationTests -target k3sserverctl-linux -platform linux/amd64 -docker
+k3sserverctl:integrationTestARM64:
+  <<: *dibsJob
+  stage: k3sserverctl:integrationTest
+  script:
+    - dibs -integrationTests -target k3sserverctl-linux -platform linux/arm64 -docker
+
+# Build and push binaries
+k3sd:buildAndPushBinariesAMD64:
+  <<: *dibsJob
+  stage: k3sd:buildAndPushBinaries
+  script:
+    - dibs -build -target k3sd-linux -platform linux/amd64 -docker
+    - dibs -pushBinary -target k3sd-linux -platform linux/amd64
+  artifacts:
+    name: k3sd-binaries-amd64
+    paths:
+      - .bin/binaries/k3sd
+    expire_in: 1 month
+  only:
+    - tags
+k3sd:buildAndPushBinariesARM64:
+  <<: *dibsJob
+  stage: k3sd:buildAndPushBinaries
+  script:
+    - dibs -build -target k3sd-linux -platform linux/arm64 -docker
+    - dibs -pushBinary -target k3sd-linux -platform linux/arm64
+  artifacts:
+    name: k3sd-binaries-arm64
+    paths:
+      - .bin/binaries/k3sd
+    expire_in: 1 month
+  only:
+    - tags
+
+k3sserverctl:buildAndPushBinariesAMD64:
+  <<: *dibsJob
+  stage: k3sserverctl:buildAndPushBinaries
+  script:
+    - dibs -build -target k3sserverctl-linux -platform linux/amd64 -docker
+    - dibs -pushBinary -target k3sserverctl-linux -platform linux/amd64
+  artifacts:
+    name: k3sserverctl-binaries-amd64
+    paths:
+      - .bin/binaries/k3sserverctl
+    expire_in: 1 month
+  only:
+    - tags
+k3sserverctl:buildAndPushBinariesARM64:
+  <<: *dibsJob
+  stage: k3sserverctl:buildAndPushBinaries
+  script:
+    - dibs -build -target k3sserverctl-linux -platform linux/arm64 -docker
+    - dibs -pushBinary -target k3sserverctl-linux -platform linux/arm64
+  artifacts:
+    name: k3sserverctl-binaries-arm64
+    paths:
+      - .bin/binaries/k3sserverctl
+    expire_in: 1 month
+  only:
+    - tags
+
+k3sagentctl:buildAndPushBinariesAMD64:
+  <<: *dibsJob
+  stage: k3sagentctl:buildAndPushBinaries
+  script:
+    - dibs -build -target k3sagentctl-linux -platform linux/amd64 -docker
+    - dibs -pushBinary -target k3sagentctl-linux -platform linux/amd64
+  artifacts:
+    name: k3sagentctl-binaries-amd64
+    paths:
+      - .bin/binaries/k3sagentctl
+    expire_in: 1 month
+  only:
+    - tags
+k3sagentctl:buildAndPushBinariesARM64:
+  <<: *dibsJob
+  stage: k3sagentctl:buildAndPushBinaries
+  script:
+    - dibs -build -target k3sagentctl-linux -platform linux/arm64 -docker
+    - dibs -pushBinary -target k3sagentctl-linux -platform linux/arm64
+  artifacts:
+    name: k3sagentctl-binaries-arm64
+    paths:
+      - .bin/binaries/k3sagentctl
+    expire_in: 1 month
+  only:
+    - tags
