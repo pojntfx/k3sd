@@ -195,7 +195,9 @@ func init() {
 	proto.RegisterType((*K3SAgentDeletionState)(nil), "k3sd.K3SAgentDeletionState")
 }
 
-func init() { proto.RegisterFile("agent.proto", fileDescriptor_56ede974c0020f77) }
+func init() {
+	proto.RegisterFile("agent.proto", fileDescriptor_56ede974c0020f77)
+}
 
 var fileDescriptor_56ede974c0020f77 = []byte{
 	// 255 bytes of a gzipped FileDescriptorProto
