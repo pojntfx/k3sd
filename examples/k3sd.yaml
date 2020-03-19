@@ -1,2 +1,2 @@
 k3sd:
-  listenHostPort: localhost:1070
+  listenHostPort: :1070
