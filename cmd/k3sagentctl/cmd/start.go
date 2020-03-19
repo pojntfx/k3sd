@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	constants "github.com/pojntfx/k3sd/cmd"
 	k3sd "github.com/pojntfx/k3sd/pkg/proto/generated"
 	"github.com/spf13/cobra"
@@ -61,7 +62,7 @@ func init() {
 	startCmd.PersistentFlags().StringVarP(&configFileFlag, configFileKey, "f", configFileDefault, constants.ConfigurationFileDocs)
 	startCmd.PersistentFlags().StringVarP(&networkDeviceFlag, networkDeviceKey, "d", "edge0", "The name of the network device to use.")
 	startCmd.PersistentFlags().StringVarP(&tokenFlag, tokenKey, "t", "asdf", "The token to authenticate with.")
-	startCmd.PersistentFlags().StringVarP(&serverUrlFlag, serverUrlKey, "u", "https://localhost:6443", "The URL of the server to connect to.")
+	startCmd.PersistentFlags().StringVarP(&serverUrlFlag, serverUrlKey, "u", "https://:6443", "The URL of the server to connect to.")
 
 	if err := viper.BindPFlags(startCmd.PersistentFlags()); err != nil {
 		log.Fatal(constants.CouldNotBindFlagsErrorMessage, rz.Err(err))

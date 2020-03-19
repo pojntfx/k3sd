@@ -1,7 +1,7 @@
 package cmd
 
 const (
-	K3SDHostPortDefault   = "localhost:1070"                  // K3SDPortDefault is the default Host:port of `k3sd`.
+	K3SDHostPortDefault   = ":1070"                           // K3SDPortDefault is the default Host:port of `k3sd`.
 	HostPortDocs          = "Host:port of the server to use." // HostPortDocs is the documentation for the host:port flag.
 	ConfigurationFileDocs = "Configuration file to use."      // ConfigurationFileDocs is the documentation for the configuration file flag.
 )
